@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <!-- 权限认证服务器实体类 -->
+    <bean id="authHandler" class="com.nanshan.willow.auth.service.impl.RestAuthFilterHandlerImpl"></bean>
+    <bean id="authService" class="com.nanshan.willow.auth.service.impl.AuthServiceImpl"></bean>
+    <bean id="redisDao" class=" com.nanshan.willow.common.util.RedisDao"></bean>
+   	<bean id="validTokenManager" class="com.nanshan.willow.auth.util.ValidTokenManager"></bean> 
+   
+   
+
+
+   
+    
+    <!-- Ecache缓存配置 -->
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="shared" value="true" />
+        <property name="configLocation" value="classpath:/spring/ehcache.xml" />
+
+    </bean>
+
+	<bean id="dictParamCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <property name="cacheManager" ref="cacheManager" />
+        <property name="cacheName" value="dictParamCache" />
+    </bean>
+    
+    <bean id="tradeCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <property name="cacheManager" ref="cacheManager" />
+        <property name="cacheName" value="tradeCache" />
+    </bean>
+</beans>

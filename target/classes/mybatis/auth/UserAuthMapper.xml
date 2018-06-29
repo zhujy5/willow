@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nanshan.willow.auth.mapper.UserAuthMapper">
+	
+	
+	<!-- 查询密码，密码修改时间，密码错误次数 -->
+	<select id="getPasswordInfo" parameterType="String" resultMap="usersResultMap">
+       select tur.role_code,t.user_relevance_id,t.user_account,t.last_login_time,t.user_password,t.password_try_num,t.password_status,t.user_status 
+       from t_user t  left JOIN t_user_role tur ON t.user_relevance_id = tur.user_relevance_id
+       where 
+        t.user_account=#{userAccount}
+        and user_status = '0' and register_type != '1' 
+	</select>
+	
+	<!-- 密码错误次数+1 -->
+	<update id="updatePasswordSize" parameterType="String">
+		update t_user set  password_try_num = password_try_num +1 
+		where  user_relevance_id=#{userRelevanceId} and user_status = '0'
+	</update>
+	
+	<!-- 密码错误次数清零以及修改设计相关信息-->
+	<update id="updatePasswordNum" parameterType="com.nanshan.willow.auth.entity.User">
+		update t_user set  
+		<if test="macAddress != null and macAddress!=''">
+			mac_address = #{macAddress},
+		</if>
+		<if test="mobileBrand != null and mobileBrand !=''">
+			mobile_brand = #{mobileBrand},
+		</if>
+		<if test="mobileSystem != null and mobileSystem !=''">
+			mobile_system = #{mobileSystem},
+		</if>
+		password_try_num = 0,last_login_time = CURRENT_TIMESTAMP 
+		where  user_account=#{userAccount} and user_status = '0'
+	</update>
+	
+	<!--获取用户信息 -->
+	<select id="getUserInfo" parameterType="String" resultMap="usersResultMap">
+       select t.user_relevance_id,t.user_account,t.head_pic,nick_name,t.iphone
+        from t_user t where 
+        t.user_account=#{userAccount}
+        and user_status = '0'
+	</select>
+	
+	<resultMap type="com.nanshan.willow.auth.entity.User" id="usersResultMap">
+		<result column="user_relevance_id" property="userRelevanceId"/>
+		<result column="user_account" property="userAccount"/>
+		<result column="last_login_time" property="lastLogin"/>
+		<result column="user_password" property="password"/>
+		<result column="password_try_num" property="passwordTryNum"/>
+		<result column="password_status" property="passwordStatus"/>
+		<result column="user_status" property="userStatus"/>
+		<result column="creatd_by" property="creatdBy"/>
+		<result column="update_by" property="updateBy"/>
+		<result column="iphone" property="iphone"/>
+		<result column="head_pic" property="headPic"/>
+		<result column="nick_name" property="nickName"/>
+		<result column="register_type" property="registerType"/>
+		<result column="wx_open_id" property="wxOpenId"/>
+		<result column="wx_nick_name" property="wxNickName"/>
+		<result column="role_code" property="roleCode"/>
+	</resultMap>
+	
+</mapper>

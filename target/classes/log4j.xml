@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+
+    <!-- Appenders -->
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{HH:mm:ss} %-5p %c - %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="esales" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="./log/esales.log" />
+        <param name="Append" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{HH:mm:ss.SSS} %-5p [%t] %c{1} - %m%n" />
+        </layout>
+    </appender>
+ 
+    <appender name="springframework" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="./log/springframework.log" />
+        <param name="Append" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{HH:mm:ss.SSS} %-5p [%t] %c{1} - %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="mybatis" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="./log/mybatis.log" />
+        <param name="Append" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{HH:mm:ss.SSS} %-5p [%t] %c{1} - %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="sql" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="./log/sql.log" />
+        <param name="Append" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{HH:mm:ss.SSS} %-5p [%t] %c{1} - %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="error" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="./log/error.log" />
+        <param name="Append" value="true" />
+        <param name="Threshold" value="ERROR" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{HH:mm:ss.SSS} %-5p [%t] %c{1} - %m%n" />
+        </layout>
+    </appender>
+    
+    
+    <appender name="all" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="./log/all.log" />
+        <param name="Append" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{HH:mm:ss.SSS} %-5p [%t] %c{1} - %m%n" />
+        </layout>
+    </appender>
+
+  
+
+    <!-- 3rdparty Loggers -->
+    <category name="org.springframework">
+        <priority value="error" />
+        <appender-ref ref="springframework" />
+    </category>
+
+    <category name="org.mybatis.spring">
+        <priority value="debug" />
+        <appender-ref ref="mybatis" />
+    </category>
+
+    <category name="java.sql">
+        <priority value="debug" />
+        <appender-ref ref="sql" />
+    </category>
+
+    <root>
+        <priority value="debug" />
+        <appender-ref ref="console" />
+        <appender-ref ref="all" />
+        <appender-ref ref="error" />
+    </root>
+
+</log4j:configuration>

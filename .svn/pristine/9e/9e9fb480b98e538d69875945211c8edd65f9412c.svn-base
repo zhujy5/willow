@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nanshan.willow.auth.mapper.AuthMapper">
+	
+	<!-- 获取系统配置文件 -->
+	<select id="selectSysConfig"  resultMap="sysConfigResultMap">
+		SELECT tsc.conf_value,tsc.conf_key FROM  t_sys_config tsc  WHERE tsc.conf_status='0'
+	</select>
+	
+	
+	<!-- 查询认证白名单 -->
+	<select id="selectWhitelist" resultType="String">
+		select taw.auth_url from t_auth_whitelist taw where whitelist_status='0'
+	</select>
+	
+	<!-- 查询用户角色url权限 -->
+	<select id="selectUserRoleUrl" parameterType="String" resultType="String">
+		SELECT tru.request_url FROM t_url_role tur,t_request_url tru
+		 WHERE tur.request_code = tru.request_code AND tur.role_code = #{roleCode} 
+		 AND tru.request_status = '0' AND tur.url_role_status = '0'
+	</select>
+	
+	
+	<resultMap type="com.nanshan.willow.auth.entity.SysConfig" id="sysConfigResultMap">
+		<result column="conf_key" property="confKey"/>
+		<result column="conf_value" property="confValue"/>
+	</resultMap>
+	
+</mapper>

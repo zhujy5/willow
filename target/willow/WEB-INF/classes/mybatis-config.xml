@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  <configuration>
+  	<settings>
+  		<!--lazyLoadingEnabled默认为false  -->
+  		<setting name="lazyLoadingEnabled" value="true"/>
+  		
+  		<!--aggressiveLazyLoading:侵略性lazy loading 开关，默认true<=3.4.1
+  		在开启时访问任何属性都会加载所有其他lazy load属性  -->
+  		<setting name="aggressiveLazyLoading" value="false"/>
+  	</settings>
+  
+  </configuration>

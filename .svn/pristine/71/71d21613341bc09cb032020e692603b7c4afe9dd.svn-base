@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+       Willow打包发布脚本                                                             
+     ====================================================================== -->
+<project name="Willow_build" default="deploy_dev">
+    <description>
+    	Willow打包发布脚本
+    </description>
+
+    <tstamp>
+        <format property="TimeSign" pattern="yyyyMMddHHmmss" />
+    </tstamp>
+
+    <property environment="env" />
+    <property file="${env.ccshare}/build.properties">
+    </property>
+    <property name="version" value="tmp" />
+
+    <property name="deploy_path" value="usr/local/willow_deploys" />
+    <property name="project" value="willow" />
+    <property name="dev_folder" value="${deploy_path}/${version}/dev/${project}" />
+    <property name="uat_folder" value="${deploy_path}/${version}/uat/${project}" />
+    <property name="prd_folder" value="${deploy_path}/${version}/prd" />
+    <property name="jboss_deploy_path" value="/qhapp/jboss/jboss-eap-6.4/standalone/deployments" />
+
+    <!-- 发布开发目录 -->
+    <target name="deploy_dev" description="上传文件到构建目录">
+        <!-- 创建目录 -->
+        <mkdir dir="${dev_folder}/${TimeSign}" />
+
+        <!-- 复制文件 -->
+        <copy todir="${dev_folder}/${TimeSign}">
+            <fileset file="target/*.war">
+            </fileset>
+        </copy>
+
+        <!-- 更新配置文件 -->
+        <propertyfile file="${deploy_path}/${version}/dev/${project}/lastest.properties">
+            <entry key="lastest" value="${TimeSign}" />
+        </propertyfile>
+
+    </target>
+
+    <!-- 发布测试目录 -->
+    <target name="deploy_uat" description="上传文件到构建目录">
+        <property file="${deploy_path}/${version}/dev/${project}/lastest.properties" />
+        <echo>${project}.lastest=${lastest}</echo>
+        <fail unless="lastest" message="开发包没有构建，请先构建INT环境" />
+
+        <!-- 创建目录 -->
+        <mkdir dir="${uat_folder}/${lastest}" />
+
+        <copy todir="${uat_folder}/${lastest}">
+            <fileset dir="${deploy_path}/${version}/dev/${project}/${lastest}">
+            </fileset>
+        </copy>
+
+        <copy todir="target">
+            <fileset dir="${deploy_path}/${version}/dev/${project}/${lastest}">
+            </fileset>
+        </copy>
+
+        <propertyfile file="${deploy_path}/${version}/uat/${project}/lastest.properties">
+            <entry key="lastest" value="${lastest}" />
+        </propertyfile>
+    </target>
+
+    <target name="deploy_prd" description="上传文件到构建目录">
+        <property file="${deploy_path}/${version}/uat/${project}/lastest.properties" />
+        <echo>${project}.lastest=${lastest}</echo>
+        <fail unless="lastest" message="开发包没有构建，请先构建INT和UAT环境" />
+
+        <!-- 创建目录 -->
+        <mkdir dir="${prd_folder}" />
+
+        <copy todir="${prd_folder}" overwrite="true">
+            <fileset dir="${deploy_path}/${version}/uat/${project}/${lastest}">
+            </fileset>
+        </copy>
+        <propertyfile file="${prd_folder}/lastest.properties">
+            <entry key="${project}.lastest" value="${lastest}" />
+        </propertyfile>
+    </target>
+    
+    <target name="upload_war" description="upload war file">
+        <scp todir="tomcat@${jboss_host}:/usr/tmp" password="querytomcat" trust="true">
+            <fileset file="target/${project}*.war">
+            </fileset>
+        </scp>
+	<sshexec command="cd /zlapp/tomcat/apache-tomcat-8.0.49/webapps; rm -rf willow*;cp /usr/tmp/willow.war willow.war" host="${jboss_host}" username="tomcat" password="querytomcat" trust="true" />
+	<sshexec command="cd /zlapp/tomcat/apache-tomcat-8.0.49;sh restart_tomcat.sh " host="${jboss_host}" username="tomcat" password="querytomcat" trust="true" />
+    </target>
+</project>
